@@ -1,0 +1,44 @@
+﻿@if (show)
+{
+    <div class="popupDiv popupZIndex_1">
+        <div class="col">
+            <div class="row mb-4">
+                <div class="col d-flex justify-content-start" style="font-size: large; font-weight: bold;">
+                    About
+                </div>
+
+                <div class="col d-flex justify-content-end">
+                    <button style="padding: 3px 10px; height: fit-content;" @onclick="() => { Show = !Show; }">X</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <p>
+                    I often use online diff tools to compare code snippets and text files, so I decided to make my own.
+                    I already used the Monaco editor in other projects(<a href="https://eecs.blog/BlazorApps/CSharpOnlineCompiler/" target="_blank" rel="noopener noreferrer">online C# compiler</a>, <a href="https://eecs.blog/BlazorApps/DecentPaste/" target="_blank" rel="noopener noreferrer">Decent Paste</a>) so I knew it had a diff editor as well. Additionally, I already had the code to save and share the editor using <a href="https://gun.js.org/" target="_blank" rel="noopener noreferrer">GUN.js</a>(decentralized graph database).
+                </p>
+                <p>
+                    The account and its data are saved to the GUN.js decentralized database. <b>Warning: I'm not hosting a relay node, so any data you save is reliant on public nodes, which may not store your data indefinitely.</b> You can add additional nodes under: Gun Nodes
+                </p>
+                <p>
+                    Developed by <a href="https://eecs.blog" target="_blank" rel="noopener noreferrer">The EECS Blog</a>, project <a href="https://github.com/EECSB/DecentDiff" target="_blank" rel="noopener noreferrer">Github repository</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    private bool show = false;
+    [Parameter]
+    public bool Show
+    {
+        get { return show; }
+        set 
+        { 
+            show = value; 
+            StateHasChanged(); 
+        }
+    }
+}
