@@ -7,8 +7,5 @@ I often use online diff tools to compare code snippets and text files, so I deci
 
 The account and its data are saved to the GUN.js decentralized database. **Warning: I'm not hosting a relay node, so any data you save is reliant on public nodes, which may not store your data indefinitely.** You can add additional nodes under: Gun Nodes
 
-
-
-
 ## Try it out
 You can try it out [here](https://eecs.blog/BlazorApps/DecentDiff/)
