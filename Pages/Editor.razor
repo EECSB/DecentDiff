@@ -552,7 +552,7 @@
         }
         else if (string.IsNullOrEmpty(PublicID) && string.IsNullOrEmpty(PublicKey) && string.IsNullOrEmpty(ShareKey) && string.IsNullOrEmpty(WorkspaceName) && string.IsNullOrEmpty(SerializedEditorState))
         {
-            string storedState = await localStorage.GetItemAsStringAsync("appstate");
+            string storedState = await localStorage.GetItemAsStringAsync("DecentDiffAppState");
 
             if (string.IsNullOrEmpty(storedState))
             {
@@ -676,7 +676,7 @@
 
             OnChange += async () =>
             {
-                await localStorage.SetItemAsStringAsync("decentDiffWorkspaceAppstate", this.ToString());
+                await localStorage.SetItemAsStringAsync("DecentDiffAppState", this.ToString());
             };
         }
 
