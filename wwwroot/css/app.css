@@ -8,6 +8,7 @@
     --button-color: #f25958;
     --button-color-dark: #f25958;
     --button-color-green: #4bb945;
+    --button-color-purple: #5c2296;
 }
 
 html, body {
@@ -186,3 +187,25 @@ button {
     .iconButton > img {
         padding-right: 0.5em;
     }
+
+.format-button {
+    margin-left: 0.5em;
+    background-color: var(--button-color-purple);
+    color: white;
+    padding: 0 0.6em;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.status-warning {
+    color: #c0392b;
+    background-color: #fdf0ef;
+    border: 1px solid #c0392b;
+    border-radius: 4px;
+    padding: 0.25em 1em;
+    margin: 0.25em auto;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-align: center;
+    height: fit-content;
+}

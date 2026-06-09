@@ -74,3 +74,42 @@ window.ToggleMonacoWordwrap = function (value) {
 	monacoEditor.getOriginalEditor().updateOptions({ wordWrap: wrap });
 	monacoEditor.getModifiedEditor().updateOptions({ wordWrap: wrap });
 }
+
+window.FormatMonacoEditors = async function () {
+	const model = monacoEditor.getModel();
+	const language = model.original.getLanguageId();
+
+	let leftOk = true;
+	let	rightOk = true;
+
+	if (language === 'json') {
+		try {
+			JSON.parse(model.original.getValue());
+		} catch (e) {
+			leftOk = false;
+		}
+
+		try {
+			JSON.parse(model.modified.getValue());
+		} catch (e) {
+			rightOk = false;
+		}
+	}
+
+	if (leftOk)
+		await monacoEditor.getOriginalEditor().getAction('editor.action.formatDocument')?.run();
+
+	if (rightOk)
+		await monacoEditor.getModifiedEditor().getAction('editor.action.formatDocument')?.run();
+
+	if (!leftOk && !rightOk)
+		return 'Could not format: both editors contain invalid JSON.';
+
+	if (!leftOk)
+		return 'Could not format the left editor: invalid JSON.';
+
+	if (!rightOk)
+		return 'Could not format the right editor: invalid JSON.';
+
+	return '';
+}

@@ -146,6 +146,11 @@ namespace DecentDiff.Code
             await JSR.InvokeVoidAsync("ToggleMonacoWordwrap", value);
         }
 
+        public async Task<string> FormatMonacoEditors()
+        {
+            return await JSR.InvokeAsync<string>("FormatMonacoEditors");
+        }
+
         //////////////////////////////////////////////////////////////
 
 

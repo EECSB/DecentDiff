@@ -436,6 +436,13 @@
                             }
                         }
                     </select>
+
+                    @if (formatSupportedLanguages.Contains(state.SelectedLanguage))
+                    {
+                        <button @onclick="async () => { formatErrorMessage = await jsInterop.FormatMonacoEditors(); }" class="format-button" title="Format">
+                            Format
+                        </button>
+                    }
                 </div>
 
                 <div class="col d-flex justify-content-end">
@@ -481,7 +488,19 @@
     <!-- ///////////////////////////////////////// Bottom Row //////////////////////////////////////////// -->
 
     <div class="row row3 custom-border">
-        <!-- Content for the third row -->
+        @if (localStorageQuotaExceeded)
+        {
+            <div class="status-warning">
+                Warning: Your editor content is too large to save locally. Changes will not be restored on next visit. Use Share or Save to preserve your work.
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(formatErrorMessage))
+        {
+            <div class="status-warning">
+                @formatErrorMessage
+            </div>
+        }
     </div>
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -579,6 +598,13 @@
             await jsInterop.GetConfirmation("Failed to load workspace because wrong/incompatible parameters were provided in the url.");
         }
 
+        //Subscribe to quota exceeded event to show a warning in the UI if the user tries to save too much data to local storage.
+        state.OnQuotaExceeded += () => 
+        { 
+            localStorageQuotaExceeded = true; 
+            InvokeAsync(StateHasChanged); 
+        };
+
         //Should create a component that is a button with a timer that changes the text after 3 seconds, but for now this will do.
         urlButtonTextTimer = new Timer(3000);
         urlButtonTextTimer.AutoReset = false; // Only trigger once
@@ -603,6 +629,7 @@
     }
 
     private List<MonacoLanguage> availableEditorLanguages = new List<MonacoLanguage>();
+    private HashSet<string> formatSupportedLanguages = new HashSet<string> { "json", "html", "css", "scss", "less", "typescript", "javascript" };
 
     protected override async void OnAfterRender(bool firstRender)
     {
@@ -676,7 +703,14 @@
 
             OnChange += async () =>
             {
-                await localStorage.SetItemAsStringAsync("DecentDiffAppState", this.ToString());
+                try
+                {
+                    await localStorage.SetItemAsStringAsync("DecentDiffAppState", this.ToString());
+                }
+                catch (Microsoft.JSInterop.JSException)
+                {
+                    OnQuotaExceeded?.Invoke();
+                }
             };
         }
 
@@ -694,7 +728,14 @@
                 deserState = JsonSerializer.Deserialize<AppState>(SerializedEditorState);
                 deserState.OnChange += async () =>
                 {
-                    await localStorage.SetItemAsStringAsync("DecentDiffAppState", deserState.ToString());
+                    try
+                    {
+                        await localStorage.SetItemAsStringAsync("DecentDiffAppState", deserState.ToString());
+                    }
+                    catch (Microsoft.JSInterop.JSException)
+                    {
+                        deserState.OnQuotaExceeded?.Invoke();
+                    }
                 };
             }
             catch { }
@@ -718,6 +759,7 @@
 
 
         public event Action? OnChange;
+        public event Action? OnQuotaExceeded;
         private void NotifyStateChanged() => OnChange?.Invoke();
 
         private string shareKey;
@@ -852,6 +894,8 @@
     private AppState? prevState = null;
     private JSInterop jsInterop;
 
+    private bool localStorageQuotaExceeded = false;
+    private string formatErrorMessage = "";
 
     //Gun
     List<string> workspaces = new List<string>();
